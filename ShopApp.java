@@ -8,6 +8,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.text.NumberFormat;
 
 /**
  *
@@ -20,39 +21,43 @@ public class ShopApp {
      */
     public static void main(String[] args) {
         double tax = .2;
-        double total = 0;
+        double total;
         int measurement = 3;
+        NumberFormat currency = NumberFormat.getCurrencyInstance();
 
         List<Clothing> order = new ArrayList<>();
 
-        Customer c1 = new Customer();
-        c1.setName("Harrison");
-        c1.setSize("S");
-        setMeasurement(measurement, c1);
-        System.out.println("Hello customer: " + c1.getName() + "We have your size being: " + c1.getSize());
+        Customer c1 = new Customer("Harrison", measurement);
 
+//        c1.setSize("S");
+//        c1.setSize(measurement);
+        System.out.println("Hello customer: " + c1.getName() + " We have your size being: " + c1.getSize());
+
+        System.out.println("Minumum price: " + Clothing.MIN_PRICE + " Tax rate: " + Clothing.TAX_RATE);
         Clothing item1 = new Clothing("Blue Jacket", 20.9);
         Clothing item2 = new Clothing("Orange T-Shirt", 10.5, "S");
         Clothing item3 = new Clothing("Blue T-Shirt", 10.5, "S");
-        Clothing item4 = new Clothing("Red T-Shirt", 10.5, "S");
-        Clothing item5 = new Clothing("Green Scarf", 9.5, "S");
+        Clothing item4 = new Clothing("Red T-Shirt", 10.5, "M");
+        Clothing item5 = new Clothing("Green Scarf", 9.5, "L");
 
         order.add(item1);
         order.add(item2);
         order.add(item3);
         order.add(item4);
         order.add(item5);
-
-        
-
-        
+        System.out.println(currency.format(item5.getPrice()));
+        Clothing[] itemsArray = order.toArray(new Clothing[0]);
+        c1.addItems(itemsArray);
+//        Clothing[] returnedItems = c1.getItems();
+//        for(Clothing item : returnedItems){
+//            System.out.println(item.getPrice());
+//        }
         /* 
         Using array and showing different loop options
         enhanced 
         streams
         
          */
-        
 //        Clothing[] items = {item1, item2, item3};
 //        for (int i = 0; i < items.length; i++){
 //            System.out.println(items[i]);
@@ -67,39 +72,26 @@ public class ShopApp {
 //        // Alternatively, you can use method references
 //        Arrays.stream(items).forEach(System.out::println);
 //        
-        int count = 1;
-        for (Clothing item : order) {
-            if(item.getSize().equals(c1.getSize())){
-               System.out.println("item"+ count +": " + item);
-               total += item.getPrice() * (1 + tax);
-               count++;
-            }
-            if(total > 15){
-                break;
-            }
-            
-        }
+//        int count = 1;
+//        for (Clothing item : order) {
+//            if (item.getSize().equals(c1.getSize())) {
+//                System.out.println("item" + count + ": " + item);
+//                total += item.getPrice();
+////                total += item.getPrice() * (1 + tax);
+//                count++;
+//            }
+//            if (total > 15) {
+//                break;
+//            }
+//
+//        }
 //        total *= (1 + tax);
 //        total += (total * tax); by adding the 1 to the tax will include the tax base line 
 //Total Price after Tax=41.9×(1+0.2)=41.9×1.2=50.28
-        System.out.printf("Your total after tax comes to: %.2f%n", total);
-    }
 
-    static void setMeasurement(int meas, Customer c) {
-        switch (meas) {
-            case 1, 2, 3:
-                c.setSize("S");
-                break;
-            case 4, 5, 6:
-                c.setSize("M");
-                break;
-            case 7, 8, 9:
-                c.setSize("L");
-                break;
-            default:
-                c.setSize("X");
-                break;
-        }
+        total = c1.getTotalClothingCost();
+
+        System.out.println("Your total after tax comes to: "+ currency.format(total));
     }
 
 }

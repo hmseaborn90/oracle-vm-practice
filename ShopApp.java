@@ -4,7 +4,11 @@
  */
 package duke.choice;
 
-import java.text.DecimalFormat;
+import io.helidon.webserver.Routing;
+import io.helidon.webserver.ServerConfiguration;
+import io.helidon.webserver.WebServer;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +28,7 @@ public class ShopApp {
         double total;
         int measurement = 3;
         NumberFormat currency = NumberFormat.getCurrencyInstance();
-
+        
         List<Clothing> order = new ArrayList<>();
 
         Customer c1 = new Customer("Harrison", measurement);
@@ -34,11 +38,11 @@ public class ShopApp {
         System.out.println("Hello customer: " + c1.getName() + " We have your size being: " + c1.getSize());
 
         System.out.println("Minumum price: " + Clothing.MIN_PRICE + " Tax rate: " + Clothing.TAX_RATE);
-        Clothing item1 = new Clothing("Blue Jacket", 20.9);
+        Clothing item1 = new Clothing("Blue Jacket", 20.9, "L");
         Clothing item2 = new Clothing("Orange T-Shirt", 10.5, "S");
         Clothing item3 = new Clothing("Blue T-Shirt", 10.5, "S");
         Clothing item4 = new Clothing("Red T-Shirt", 10.5, "M");
-        Clothing item5 = new Clothing("Green Scarf", 9.5, "L");
+        Clothing item5 = new Clothing("Green Scarf", 9.5, "S");
 
         order.add(item1);
         order.add(item2);
@@ -48,6 +52,20 @@ public class ShopApp {
         System.out.println(currency.format(item5.getPrice()));
         Clothing[] itemsArray = order.toArray(new Clothing[0]);
         c1.addItems(itemsArray);
+        
+        try{
+            ItemList list = new ItemList(c1.getItems());
+            Routing routing = Routing.builder().get("/items", list).build();
+            
+            ServerConfiguration config = 
+                    ServerConfiguration.builder().bindAddress(InetAddress.getLocalHost()).port(8888).build();
+            
+            WebServer ws = WebServer.create(config, routing);
+            
+            ws.start();
+        } catch (UnknownHostException ex){
+            ex.printStackTrace();
+        }
 //        Clothing[] returnedItems = c1.getItems();
 //        for(Clothing item : returnedItems){
 //            System.out.println(item.getPrice());
@@ -88,8 +106,10 @@ public class ShopApp {
 //        total *= (1 + tax);
 //        total += (total * tax); by adding the 1 to the tax will include the tax base line 
 //Total Price after Tax=41.9×(1+0.2)=41.9×1.2=50.28
-
+        Arrays.sort(c1.getItems());
         total = c1.getTotalClothingCost();
+        
+        System.out.println(c1.averageClotingCost());
 
         System.out.println("Your total after tax comes to: "+ currency.format(total));
     }

@@ -48,6 +48,28 @@ public class Customer {
         }
         return total;
     }
+    
+    public double averageClotingCost(){
+        int total= 0;
+        int numOfItems = 0;
+        for (Clothing item : items){
+//            if(item.getSize().equals("L")){
+                total += item.getPrice();
+                numOfItems++;
+//            }
+        }
+        double averagePrice = 0;
+        try{
+            System.out.println("inside of try");
+            averagePrice = (total / numOfItems);
+        } catch(ArithmeticException e){
+            System.out.println("inside of catch");
+            System.out.println(e.getMessage());
+        }
+        System.out.println("outside of catch");
+        
+        return averagePrice;
+    }
 
     public String getName() {
         return name;
@@ -81,8 +103,4 @@ public class Customer {
                 break;
         }
     }
-
-//    private void setMeasurement(int measurement) {
-//        
-//    }
 }
